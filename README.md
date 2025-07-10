@@ -1,186 +1,97 @@
-# PubMed Paper Fetcher
+# 📚 PubMed Paper Fetcher
 
-\# PubMed Paper Fetcher
-
-
-
-This project fetches scientific papers from the PubMed database, extracts non-academic authors working in pharmaceutical/biotech companies, and saves the results to a CSV file.
-
-
+A simple Python CLI tool to fetch PubMed paper details and extract non-academic author affiliations.
 
 ---
 
+## 🚀 Features
 
-
-\## 🔧 Features
-
-
-
-\- Search PubMed using a keyword.
-
-\- Extract paper details: title, authors, affiliations, and emails.
-
-\- Identify authors from non-academic affiliations (pharma/biotech companies).
-
-\- Save results to a CSV file.
-
-\- Easy to use Command Line Interface (CLI).
-
-
+- 🔍 Search PubMed papers by query.
+- 📄 Output paper details including:
+   - PubMed ID
+   - Title
+   - Publication Date
+   - Non-academic Authors
+   - Company Affiliations
+   - Corresponding Author Email
+- ✅ Save results to a CSV file or display in the terminal.
+- ⚙️ Easy-to-use CLI.
+- 📦 Packaged with Poetry, published to Test PyPI.
 
 ---
 
+## 📦 Installation
 
-
-\## 🚀 Installation
-
-
-
-1\. Clone the project:
-
-&nbsp;  ```bash
-
-&nbsp;  git clone <your-repository-url>
-
-&nbsp;  cd pubmed-paper-fetcher
-
-&nbsp;  ```
-
-
-
-2\. Install dependencies using Poetry:
-
-&nbsp;  ```bash
-
-&nbsp;  python -m poetry install
-
-&nbsp;  ```
-
-
-
----
-
-
-
-\## ▶️ Usage
-
-
-
-Basic example:
+### ✅ Install from Test PyPI
 
 ```bash
-
-python -m poetry run get-papers-list "cancer"
-
+pip install --index-url https://test.pypi.org/simple/ pubmed-paper-fetcher-aravind
 ```
 
+✔️ The package is available on **Test PyPI**, a testing Python package repository.
 
+---
 
-Specify output file:
+## 🔧 CLI Usage
+
+### ▶️ Basic Example (Print to Console)
 
 ```bash
-
-python -m poetry run get-papers-list "covid-19" -f covid\_results.csv
-
+get-papers-list "cancer"
 ```
 
-
-
-Enable debug mode:
+### ▶️ Save Output to CSV
 
 ```bash
-
-python -m poetry run get-papers-list "malaria" -f malaria\_results.csv --debug
-
+get-papers-list "cancer" -f results.csv
 ```
 
+### ▶️ Show Debug Information
 
-
----
-
-
-
-\## ⚙️ CLI Options
-
-
-
-| Option / Argument | Purpose                                |
-
-|--------------------|----------------------------------------|
-
-| `<query>`          | Search term for PubMed (required)     |
-
-| `-f, --file`       | CSV file to save results (optional)   |
-
-| `-d, --debug`      | Show debug info during execution      |
-
-| `-h, --help`       | Show help message                     |
-
-
+```bash
+get-papers-list "cancer" -f results.csv --debug
+```
 
 ---
 
+## 📑 CLI Arguments
 
-
-\## 📂 Example Output (CSV)
-
-
-
-| PubmedID | Title                   | Publication Date | Non-academic Author(s) | Company Affiliation(s) | Corresponding Author Email |
-
-|----------|--------------------------|------------------|------------------------|------------------------|---------------------------|
-
-| 38765421 | Cancer drug discovery     | 2024             | Alice Brown            | PharmaCorp Inc.        | alice@pharma.com          |
-
-| 38765201 | Clinical trial results    | 2023             | N/A                    | N/A                    | N/A                       |
-
-
+| Argument / Option          | Description                                   | Required |
+|----------------------------|-----------------------------------------------|----------|
+| `query`                    | Search term for PubMed                        | ✅ Yes   |
+| `-f`, `--file`             | Output CSV file name                          | Optional |
+| `-d`, `--debug`            | Show debug info (IDs, data)                   | Optional |
+| `-h`, `--help`             | Show CLI help message                         | Auto     |
 
 ---
 
+## 🔗 Example CSV Output
 
-
-\## 🤖 LLM Usage (ChatGPT)
-
-
-
-During development, ChatGPT was used for:
-
-\- API documentation lookup.
-
-\- Designing the CSV format.
-
-\- Debugging Python errors.
-
-\- Improving code readability.
-
-\- Explaining Poetry usage and CLI best practices.
-
-
+| PubmedID | Title                 | Publication Date | Non-academic Author(s) | Company Affiliation(s) | Corresponding Author Email |
+|----------|------------------------|------------------|------------------------|------------------------|---------------------------|
+| 40635126 | Cancer Genomics         | 2025             | John Doe               | BioPharma Inc.         | john.doe@biopharma.com    |
 
 ---
 
+## 🛡️ LLM Assistance
 
-
-\## 🔬 PubMed API Used
-
-
-
-\- \*\*esearch:\*\* to get PubMed IDs for a search query.
-
-\- \*\*efetch:\*\* to get full paper details using PubMed IDs.
-
-
+This project was developed with the assistance of Large Language Models (LLMs) for:
+- API exploration
+- Code refactoring
+- Documentation writing
 
 ---
 
+## 🔨 Development & Build (Optional)
 
+To build and upload the project:
+```bash
+python -m poetry build
+twine upload --repository testpypi dist/*
+```
 
-\## ✅ Done By
+---
 
+## ✅ License
 
-
-Aravind Samala
-
-
-
+MIT License

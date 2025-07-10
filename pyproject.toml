@@ -1,17 +1,17 @@
-[tool.poetry]
-name = "pubmed-paper-fetcher"
+[project]
+name = "pubmed-paper-fetcher-aravind"
 version = "0.1.0"
-description = "Fetch PubMed papers"
-authors = ["Aravind Samala <aravind.samala16@gmail.com>"]
+description = "CLI tool to fetch PubMed paper details and extract non-academic authors."
+authors = [{ name = "Aravind Samala", email = "aravind.samala16@gmail.com" }]
 readme = "README.md"
-packages = [{ include = "papers" }]
+requires-python = ">=3.8"
+dependencies = ["requests"]
 
-[tool.poetry.dependencies]
-python = ">=3.8,<4.0"
-requests = "^2.32.4"
-
-[tool.poetry.scripts]
+[project.scripts]
 get-papers-list = "papers.cli:main"
+
+[tool.poetry]
+packages = [{ include = "papers" }]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
