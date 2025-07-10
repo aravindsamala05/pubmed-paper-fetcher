@@ -1,102 +1,102 @@
-# papers/fetch.py
-
 import requests
 import xml.etree.ElementTree as ET
-import csv
+from typing import List, Dict, Optional
 
-# List of academic keywords to filter out academic institutions
-ACADEMIC_KEYWORDS = ["University", "Institute", "College", "Hospital", "School", "Department", "Faculty", "Laboratory"]
+BASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 
-def search_pubmed(query: str):
-    url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
-    params = {
-        "db": "pubmed",
-        "term": query,
-        "retmode": "json",
-        "retmax": 5  # Limit results
-    }
-    response = requests.get(url, params=params)
-    data = response.json()
-    ids = data.get("esearchresult", {}).get("idlist", [])
-    return ids
 
-def fetch_pubmed_details(pubmed_ids):
-    url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
-    params = {
-        "db": "pubmed",
-        "id": ",".join(pubmed_ids),
-        "retmode": "xml"
-    }
-    response = requests.get(url, params=params)
+def search_pubmed(query: str, retmax: int = 5) -> List[str]:
+    url = f"{BASE_URL}/esearch.fcgi"
+    params = {"db": "pubmed", "term": query, "retmode": "json", "retmax": retmax}
 
-    root = ET.fromstring(response.content)
-    papers = []
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        return data.get("esearchresult", {}).get("idlist", [])
+    except requests.RequestException as e:
+        print(f"[ERROR] Failed to search PubMed: {e}")
+        return []
 
-    for article in root.findall(".//PubmedArticle"):
-        pubmed_id = article.findtext(".//PMID", default="Unknown")
-        title = article.findtext(".//ArticleTitle", default="No Title")
-        pub_date = article.findtext(".//PubDate/Year", default="Unknown")
 
-        non_academic_authors = []
-        company_affiliations = []
-        corresponding_email = ""
+def fetch_pubmed_details(paper_ids: List[str]) -> List[Dict[str, Optional[str]]]:
+    if not paper_ids:
+        return []
 
-        for author in article.findall(".//Author"):
-            last_name = author.findtext("LastName", "")
-            fore_name = author.findtext("ForeName", "")
-            full_name = f"{fore_name} {last_name}".strip()
+    url = f"{BASE_URL}/efetch.fcgi"
+    params = {"db": "pubmed", "id": ",".join(paper_ids), "retmode": "xml"}
 
-            affiliation = author.findtext(".//Affiliation", default="")
-            email = ""
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
+        root = ET.fromstring(response.content)
 
-            # Find email if available in the affiliation text
-            if "@" in affiliation:
-                email = affiliation.split()[-1] if "@" in affiliation.split()[-1] else ""
+        results: List[Dict[str, Optional[str]]] = []
 
-            # If email found and not set yet, use it as corresponding author email
-            if email and not corresponding_email:
-                corresponding_email = email.strip("()[]<>.")
+        for article in root.findall(".//PubmedArticle"):
+            paper: Dict[str, Optional[str]] = {
+                "PubmedID": article.findtext(".//PMID"),
+                "Title": article.findtext(".//ArticleTitle"),
+                "Publication Date": article.findtext(".//PubDate/Year") or "Unknown",
+                "Non-academic Author(s)": "",
+                "Company Affiliation(s)": "",
+                "Corresponding Author Email": "",
+            }
 
-            # Check if this is a non-academic affiliation
-            if affiliation and not any(keyword in affiliation for keyword in ACADEMIC_KEYWORDS):
-                if full_name:
-                    non_academic_authors.append(full_name)
-                company_affiliations.append(affiliation)
+            affiliations: List[str] = []
+            authors: List[str] = []
+            emails: List[str] = []
 
-        papers.append({
-            "PubmedID": pubmed_id,
-            "Title": title,
-            "Publication Date": pub_date,
-            "Non-academic Author(s)": ", ".join(non_academic_authors) if non_academic_authors else "N/A",
-            "Company Affiliation(s)": ", ".join(company_affiliations) if company_affiliations else "N/A",
-            "Corresponding Author Email": corresponding_email or "N/A"
-        })
+            for affiliation_info in article.findall(".//AffiliationInfo"):
+                affil_text = affiliation_info.findtext("Affiliation") or ""
+                if not is_academic(affil_text):
+                    affiliations.append(affil_text)
 
-    return papers
+            for author in article.findall(".//Author"):
+                name_parts = [author.findtext("LastName", default=""), author.findtext("ForeName", default="")]
+                author_name = " ".join(filter(None, name_parts)).strip()
+                if author_name:
+                    authors.append(author_name)
 
-def save_to_csv(papers, filename="pubmed_results.csv"):
-    fieldnames = ["PubmedID", "Title", "Publication Date", "Non-academic Author(s)", "Company Affiliation(s)", "Corresponding Author Email"]
+            for aff in affiliations:
+                if "@" in aff:
+                    emails.append(aff.split()[-1].strip(". ;:,").replace("mailto:", ""))
 
-    with open(filename, mode="w", newline='', encoding='utf-8') as file:
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(papers)
+            paper["Non-academic Author(s)"] = "; ".join(authors) or "N/A"
+            paper["Company Affiliation(s)"] = "; ".join(affiliations) or "N/A"
+            paper["Corresponding Author Email"] = emails[0] if emails else "N/A"
 
-    print(f"\nResults saved to {filename}")
+            results.append(paper)
 
-if __name__ == "__main__":
-    query = "cancer"
-    paper_ids = search_pubmed(query)
-    print("Found paper IDs:", paper_ids)
+        return results
 
-    if paper_ids:
-        papers = fetch_pubmed_details(paper_ids)
+    except requests.RequestException as e:
+        print(f"[ERROR] Failed to fetch PubMed details: {e}")
+        return []
+    except ET.ParseError as e:
+        print(f"[ERROR] Failed to parse PubMed response: {e}")
+        return []
 
-        # Print the data to check
-        for paper in papers:
-            print("\n--- Paper ---")
-            for key, value in paper.items():
-                print(f"{key}: {value}")
 
-        # Save to CSV
-        save_to_csv(papers)
+def save_to_csv(papers: List[Dict[str, Optional[str]]], filename: str = "output.csv") -> None:
+    import csv
+
+    if not papers:
+        print("[INFO] No data to save.")
+        return
+
+    try:
+        with open(filename, mode="w", newline="", encoding="utf-8") as file:
+            writer = csv.DictWriter(file, fieldnames=papers[0].keys())
+            writer.writeheader()
+            writer.writerows(papers)
+
+        print(f"[INFO] Results saved to {filename}")
+
+    except Exception as e:
+        print(f"[ERROR] Failed to save CSV: {e}")
+
+
+def is_academic(affiliation: str) -> bool:
+    academic_keywords = ["University", "College", "Institute", "School", "Hospital"]
+    return any(keyword.lower() in affiliation.lower() for keyword in academic_keywords)
