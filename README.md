@@ -14,6 +14,27 @@ A command-line tool to search for research papers on PubMed, extract key metadat
 
 ---
 
+## 📦 Published on Test PyPI
+
+This package is published for testing on **Test PyPI**.
+
+🔗 View on Test PyPI:  
+[https://test.pypi.org/project/pubmed-paper-fetcher-aravind/](https://test.pypi.org/project/pubmed-paper-fetcher-aravind/)
+
+### 📥 To Install:
+
+```bash
+pip install --index-url https://test.pypi.org/simple/ --no-deps pubmed-paper-fetcher-aravind
+```
+
+### ▶️ To Run:
+
+```bash
+get-papers-list "covid vaccine" --debug
+```
+
+---
+
 ## 📁 Project Structure
 
 ```
@@ -29,9 +50,9 @@ pubmed-paper-fetcher/
 
 ---
 
-## ⚙️ Installation
+## ⚙️ Installation (From Source)
 
-> Requires Python 3.8+ and [Poetry](https://python-poetry.org/docs/#installation).
+> Requires Python 3.8+ and [Poetry](https://python-poetry.org/docs/#installation)
 
 ### 📌 1. Clone the Repository
 
@@ -40,7 +61,99 @@ git clone https://github.com/aravindsamala05/pubmed-paper-fetcher.git
 cd pubmed-paper-fetcher
 ```
 
-### 📌 2. Install Dependencies Using Poetry
+### 📌 2. Install Dependencies
 
 ```bash
-poe
+poetry install
+```
+
+### 📌 3. Activate Virtual Environment
+
+```bash
+poetry shell
+```
+
+---
+
+## 👤 How Users Can Run This Project and Get Output
+
+### 🧾 1. Run the Tool
+
+#### Basic:
+
+```bash
+python scripts/cli.py "cancer"
+```
+
+#### With Custom File:
+
+```bash
+python scripts/cli.py "covid vaccine" -f covid.csv
+```
+
+#### With Debug Output:
+
+```bash
+python scripts/cli.py "heart disease" -f heart.csv --debug
+```
+
+---
+
+## 🧪 Usage via CLI Script
+
+If installed from Test PyPI:
+
+```bash
+get-papers-list "diabetes treatment" -f output.csv --debug
+```
+
+---
+
+## 📤 Output Format
+
+The output is saved as a CSV file containing:
+
+| PubmedID | Title | Publication Date | Non-Academic Author(s) | Company Affiliation(s) | Corresponding Author Email |
+|----------|-------|------------------|-------------------------|-------------------------|-----------------------------|
+
+---
+
+## 🐛 Troubleshooting
+
+### `ModuleNotFoundError: No module named 'papers'`
+
+Fix it by using:
+
+```bash
+set PYTHONPATH=.
+python scripts/cli.py "query"
+```
+
+Or install and run from PyPI:
+
+```bash
+pip install --index-url https://test.pypi.org/simple/ --no-deps pubmed-paper-fetcher-aravind
+get-papers-list "query"
+```
+
+---
+
+## 🔮 Future Improvements
+
+- Export to JSON/Excel
+- Detect institutions more intelligently
+- Web-based frontend
+- Email summary reports
+
+---
+
+## 👨‍💻 Author
+
+**Aravind Samala**  
+GitHub: [@aravindsamala05](https://github.com/aravindsamala05)
+
+---
+
+## 📝 License
+
+This project is licensed under the MIT License.
