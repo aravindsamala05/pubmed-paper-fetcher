@@ -1,97 +1,46 @@
-# 📚 PubMed Paper Fetcher
+# 🧪 PubMed Paper Fetcher
 
-A simple Python CLI tool to fetch PubMed paper details and extract non-academic author affiliations.
+A command-line tool to search for research papers on PubMed, extract key metadata (title, authors, journal, date, affiliations), and save the results to a CSV file.
 
 ---
 
 ## 🚀 Features
 
-- 🔍 Search PubMed papers by query.
-- 📄 Output paper details including:
-   - PubMed ID
-   - Title
-   - Publication Date
-   - Non-academic Authors
-   - Company Affiliations
-   - Corresponding Author Email
-- ✅ Save results to a CSV file or display in the terminal.
-- ⚙️ Easy-to-use CLI.
-- 📦 Packaged with Poetry, published to Test PyPI.
+- 🔍 Search PubMed using any keyword (e.g., "cancer", "covid vaccine")
+- 📄 Fetch paper details like title, authors, journal, date, and affiliation
+- 🗃️ Save results to a CSV file (default or custom filename)
+- 🐍 Built with Python using Poetry for dependency management
+- 🛠️ Optional debug mode for detailed terminal output
 
 ---
 
-## 📦 Installation
+## 📁 Project Structure
 
-### ✅ Install from Test PyPI
-
-```bash
-pip install --index-url https://test.pypi.org/simple/ pubmed-paper-fetcher-aravind
 ```
-
-✔️ The package is available on **Test PyPI**, a testing Python package repository.
-
----
-
-## 🔧 CLI Usage
-
-### ▶️ Basic Example (Print to Console)
-
-```bash
-get-papers-list "cancer"
-```
-
-### ▶️ Save Output to CSV
-
-```bash
-get-papers-list "cancer" -f results.csv
-```
-
-### ▶️ Show Debug Information
-
-```bash
-get-papers-list "cancer" -f results.csv --debug
+pubmed-paper-fetcher/
+├── papers/
+│   └── fetch.py              # Core logic to fetch and parse PubMed data
+├── scripts/
+│   └── cli.py                # CLI entry point
+├── pyproject.toml            # Poetry configuration file
+├── README.md                 # Project documentation
+└── pubmed_results.csv        # Example output file (generated after run)
 ```
 
 ---
 
-## 📑 CLI Arguments
+## ⚙️ Installation
 
-| Argument / Option          | Description                                   | Required |
-|----------------------------|-----------------------------------------------|----------|
-| `query`                    | Search term for PubMed                        | ✅ Yes   |
-| `-f`, `--file`             | Output CSV file name                          | Optional |
-| `-d`, `--debug`            | Show debug info (IDs, data)                   | Optional |
-| `-h`, `--help`             | Show CLI help message                         | Auto     |
+> Requires Python 3.8+ and [Poetry](https://python-poetry.org/docs/#installation).
 
----
+### 📌 1. Clone the Repository
 
-## 🔗 Example CSV Output
-
-| PubmedID | Title                 | Publication Date | Non-academic Author(s) | Company Affiliation(s) | Corresponding Author Email |
-|----------|------------------------|------------------|------------------------|------------------------|---------------------------|
-| 40635126 | Cancer Genomics         | 2025             | John Doe               | BioPharma Inc.         | john.doe@biopharma.com    |
-
----
-
-## 🛡️ LLM Assistance
-
-This project was developed with the assistance of Large Language Models (LLMs) for:
-- API exploration
-- Code refactoring
-- Documentation writing
-
----
-
-## 🔨 Development & Build (Optional)
-
-To build and upload the project:
 ```bash
-python -m poetry build
-twine upload --repository testpypi dist/*
+git clone https://github.com/aravindsamala05/pubmed-paper-fetcher.git
+cd pubmed-paper-fetcher
 ```
 
----
+### 📌 2. Install Dependencies Using Poetry
 
-## ✅ License
-
-MIT License
+```bash
+poe
