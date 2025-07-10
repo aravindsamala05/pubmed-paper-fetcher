@@ -1,36 +1,32 @@
 # 🧪 PubMed Paper Fetcher
 
-A command-line tool to search for research papers on PubMed, extract key metadata (title, authors, journal, date, affiliations), and save the results to a CSV file.
+A command-line tool to search for research papers on PubMed, extract key metadata (title, authors, journal, date, affiliations), and save the results to a CSV file. It filters papers to include only those with at least one **non-academic** author affiliated with a **pharmaceutical or biotech** company.
 
 ---
 
 ## 🚀 Features
 
-- 🔍 Search PubMed using any keyword (e.g., "cancer", "covid vaccine")
-- 📄 Fetch paper details like title, authors, journal, date, and affiliation
-- 🗃️ Save results to a CSV file (default or custom filename)
-- 🐍 Built with Python using Poetry for dependency management
-- 🛠️ Optional debug mode for detailed terminal output
+- 🔍 Search PubMed using any query
+- 📄 Filter papers with **non-academic authors**
+- 🧠 Identify **pharma/biotech affiliations**
+- 📤 Save structured results to a CSV file
+- 🐍 CLI built with Python and Poetry
+- 📦 Published to [Test PyPI](https://test.pypi.org/project/pubmed-paper-fetcher-aravind/)
 
 ---
 
-## 📦 Published on Test PyPI
-
-This package is published for testing on **Test PyPI**.
-
-🔗 View on Test PyPI:  
-[https://test.pypi.org/project/pubmed-paper-fetcher-aravind/](https://test.pypi.org/project/pubmed-paper-fetcher-aravind/)
-
-### 📥 To Install:
+## 📦 Install from Test PyPI
 
 ```bash
 pip install --index-url https://test.pypi.org/simple/ --no-deps pubmed-paper-fetcher-aravind
 ```
 
-### ▶️ To Run:
+---
+
+## ▶️ Run the CLI
 
 ```bash
-get-papers-list "covid vaccine" --debug
+get-papers-list "covid vaccine" -f demo_output.csv --debug
 ```
 
 ---
@@ -40,117 +36,103 @@ get-papers-list "covid vaccine" --debug
 ```
 pubmed-paper-fetcher/
 ├── papers/
-│   └── fetch.py              # Core logic to fetch and parse PubMed data
+│   └── fetch.py              # Core logic
 ├── scripts/
 │   └── cli.py                # CLI entry point
-├── pyproject.toml            # Poetry configuration file
-├── README.md                 # Project documentation
-└── pubmed_results.csv        # Example output file (generated after run)
+├── pyproject.toml            # Poetry configuration
+├── README.md                 # Documentation
+└── pubmed_results.csv        # Output sample
 ```
 
 ---
 
 ## ⚙️ Installation (From Source)
 
-> Requires Python 3.8+ and [Poetry](https://python-poetry.org/docs/#installation)
-
-### 📌 1. Clone the Repository
-
 ```bash
 git clone https://github.com/aravindsamala05/pubmed-paper-fetcher.git
 cd pubmed-paper-fetcher
-```
-
-### 📌 2. Install Dependencies
-
-```bash
 poetry install
-```
-
-### 📌 3. Activate Virtual Environment
-
-```bash
 poetry shell
 ```
 
----
-
-## 👤 How Users Can Run This Project and Get Output
-
-### 🧾 1. Run the Tool
-
-#### Basic:
+Run:
 
 ```bash
-python scripts/cli.py "cancer"
-```
-
-#### With Custom File:
-
-```bash
-python scripts/cli.py "covid vaccine" -f covid.csv
-```
-
-#### With Debug Output:
-
-```bash
-python scripts/cli.py "heart disease" -f heart.csv --debug
+python scripts/cli.py "covid vaccine" -f demo_output.csv --debug
 ```
 
 ---
 
-## 🧪 Usage via CLI Script
+## 🧠 Author Affiliation Heuristics
 
-If installed from Test PyPI:
+The tool includes a heuristic to identify **non-academic authors** based on affiliation keywords.
 
-```bash
-get-papers-list "diabetes treatment" -f output.csv --debug
-```
+### 🏫 Academic Keywords (excluded):
+- "University", "Institute", "School", "Hospital", "College", "Lab"
+
+### 🏢 Non-Academic Keywords (included):
+- "Inc", "Ltd", "LLC", "GmbH", "Pharma", "Biotech", "Corporation", "Company"
+
+If a paper contains **at least one** author with a non-academic affiliation, it is included in the output CSV.
 
 ---
 
-## 📤 Output Format
+## 📤 Sample Output (`demo_output.csv`)
 
-The output is saved as a CSV file containing:
+| PubmedID  | Title                                      | Publication Date | Non-Academic Author(s) | Company Affiliation(s)        | Corresponding Author Email      |
+|-----------|--------------------------------------------|------------------|--------------------------|--------------------------------|----------------------------------|
+| 38629493  | The impact of COVID-19 vaccine hesitancy   | 2024-03-10       | Dr. Jane Smith           | Pfizer Inc.                    | jane.smith@pfizer.com            |
+| 38621745  | Efficacy of mRNA vaccines in India         | 2023-12-18       | Rajesh K. Sharma         | Serum Institute of India Ltd.  | r.sharma@seruminstitute.com      |
 
-| PubmedID | Title | Publication Date | Non-Academic Author(s) | Company Affiliation(s) | Corresponding Author Email |
-|----------|-------|------------------|-------------------------|-------------------------|-----------------------------|
+---
+
+## 📥 Command-Line Flags
+
+| Flag           | Description                                |
+|----------------|--------------------------------------------|
+| `"query"`      | PubMed query string                        |
+| `-f, --file`   | Custom CSV output filename                 |
+| `-d, --debug`  | Enable verbose output                      |
+| `-h, --help`   | Show help message                          |
 
 ---
 
 ## 🐛 Troubleshooting
 
-### `ModuleNotFoundError: No module named 'papers'`
+```text
+ModuleNotFoundError: No module named 'papers'
+```
 
-Fix it by using:
+✅ Solution:
 
 ```bash
 set PYTHONPATH=.
 python scripts/cli.py "query"
 ```
 
-Or install and run from PyPI:
+Or simply use:
 
 ```bash
-pip install --index-url https://test.pypi.org/simple/ --no-deps pubmed-paper-fetcher-aravind
-get-papers-list "query"
+poetry run python scripts/cli.py "query"
 ```
 
 ---
 
-## 🔮 Future Improvements
+## 🤖 External Tools and Resources Used
 
-- Export to JSON/Excel
-- Detect institutions more intelligently
-- Web-based frontend
-- Email summary reports
+- **ChatGPT (OpenAI)** – Used for guidance, code review, and logic suggestions
+- **PubMed API Docs** – For query formatting and parsing results
+- **Python Docs** – For libraries like `argparse`, `csv`, `xml.etree`
+
+All logic and implementation were built, reviewed, and tested locally by the author.
 
 ---
 
 ## 👨‍💻 Author
 
 **Aravind Samala**  
-GitHub: [@aravindsamala05](https://github.com/aravindsamala05)
+GitHub: [@aravindsamala05](https://github.com/aravindsamala05)  
+Email: aravind.samala16@gmail.com
 
 ---
 
